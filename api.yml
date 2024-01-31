@@ -1,0 +1,221 @@
+# This is the OpenAPI specification for your service. It is used to generate the client code.
+# To generate the server code, use the Gradle task `openApiGenerate`. The 
+# generated code will be placed in `build/generate-resources/main`.
+#
+# We will evaluate you based on how well you design your API.
+# 1. How well it follows REST principles.
+# 2. How easy it is to understand and use.
+#
+# References
+# 1. https://swagger.io/specification/
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: User Service
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:1323
+paths:
+  /v1/users/profile:
+    post:
+      summary: Register a new profile.
+      tags:
+        - Profile
+      operationId: createUsersProfile
+      requestBody:
+        description: Request to create a new profile
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterProfileRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterProfileResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    get:
+      summary: Get User's profile.
+      tags:
+        - Profile
+      operationId: getUsersProfile
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProfileResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      summary: Update profile Data
+      tags:
+        - Profile
+      operationId: updateUsersProfile
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update existing Profile on Phone Number Or Full Name
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RegisterProfileResponse"
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '409':
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /v1/users/login:
+    post:
+      summary: Login
+      tags:
+        - Auth
+      operationId: usersLogin
+      requestBody:
+        description: Request to login
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserLoginResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+    RegisterProfileRequest:
+      type: object
+      required:
+        - phone_number
+        - full_name
+        - password
+      properties:
+        phone_number:
+          type: string
+          example: "+62811111111"
+          minLength: 10
+          maxLength: 13
+        full_name:
+          type: string
+          example: "Sawit Pro User"
+        password:
+          type: string
+          example: "password user"
+    RegisterProfileResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          example: 1
+          nullable: false
+          format: int64
+    GetProfileResponse:
+      type: object
+      required:
+        - full_name
+        - phone_number
+      properties:
+        full_name:
+          type: string
+          example: "Sawit Pro User"
+        phone_number:
+          type: string
+          example: "+62811111111"
+    UpdateProfileRequest:
+      type: object
+      properties:
+        phone_number:
+          type: string
+          example: "+62811111111"
+          nullable: true
+        full_name:
+          type: string
+          example: "Sawit Pro User"
+          nullable: true
+    UserLoginRequest:
+      type: object
+      required:
+        - phone_number
+        - password
+      properties:
+        phone_number:
+          type: string
+          example: "+62811111111"
+          nullable: false
+        password:
+          type: string
+          example: "password user"
+          nullable: false
+    UserLoginResponse:
+      type: object
+      required:
+        - id
+        - access_token
+      properties:
+        id:
+          type: integer
+          example: 1
+          nullable: false
+          format: int64
+        access_token:
+          type: string
+          example: "ejfdsafasdfafdasdfa......"
+          nullable: false
